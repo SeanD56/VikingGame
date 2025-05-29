@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<title>Final Project</title>
+   
+<script id="vertex-shader" type="x-shader/x-vertex">
+attribute vec4 a_vPosition;
+uniform mat4, u_mvMatrix;
+uniform mat4, u_ctMatrix;
+uniform mat4, u_projMatrix;
+int enemyPositionBool;
+
+uniform mat4, u_enemyCTMatrix;
+
+attribute  vec2 a_vTexCoord;
+varying vec2 v_fTexCoord;
+
+
+
+void
+main()
+{
+    //send texture coordinates to fragment-shader
+    v_fTexCoord = a_vTexCoord;
+
+    gl_Position = u_projMatrix * u_mvMatrix * u_ctMatrix * a_vPosition;
+
+    if (enemyPositionBool != 0) {
+        gl_Position = u_projMatrix * u_mvMatrix * u_enemyCTMatrix * a_vPosition;
+    }
+
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+
+precision mediump float;
+uniform vec3 u_baseColor;
+
+//flag to draw texture
+uniform bool u_drawTexture;
+
+varying  vec2 v_fTexCoord;
+uniform sampler2D u_texSampler;
+uniform vec4 u_baseTextureColor;
+
+
+void
+main()
+{
+    //if u_drawTexture flag is set, then use texture, otherwise just use baseColor
+    if (u_drawTexture) {
+        gl_FragColor = texture2D( u_texSampler, v_fTexCoord ) * u_baseTextureColor;
+    } else {    
+        gl_FragColor = vec4( u_baseColor, 1.0 );
+    }
+}
+
+</script>
+
+<script type="text/javascript" src="Common/webgl-utils.js"></script>
+<script type="text/javascript" src="Common/initShaders.js"></script>
+<script type="text/javascript" src="Common/MV.js"></script>
+<script type="text/javascript" src="finalProject.js"></script>
+
+<audio id="audioPlayer" autoplay preload="auto" loop>
+    <!-- Provide the path to your audio file -->
+    <source src="a-sinister-power-rising-epic-dark-gothic-soundtrack-15021.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+</audio>
+
+</head>   
+
+<body>
+<canvas id="gl-canvas" width="1024" height="512">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+<img id = "floorImage" src = "floor.jpg" hidden></img>
+<img id = "backgroundImage" src = "background.jpg" hidden></img>
+<img id = "poleImage" src = "pole.jpg" hidden></img>
+</body>
+</html>
